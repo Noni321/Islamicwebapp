@@ -1,4 +1,4 @@
-import { Sparkles } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 import SuggestedQuestion from "./SuggestedQuestion";
 
 interface WelcomeScreenProps {
@@ -18,7 +18,7 @@ export default function WelcomeScreen({ onQuestionSelect }: WelcomeScreenProps) 
       <div className="max-w-2xl w-full space-y-8">
         <div className="text-center space-y-4">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10">
-            <Sparkles className="h-8 w-8 text-primary" />
+            <MessageCircle className="h-8 w-8 text-primary" />
           </div>
           <div className="space-y-2">
             <h1 className="text-2xl md:text-3xl font-bold font-serif">

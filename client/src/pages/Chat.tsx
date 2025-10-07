@@ -4,7 +4,7 @@ import ChatInput from "@/components/ChatInput";
 import WelcomeScreen from "@/components/WelcomeScreen";
 import TypingIndicator from "@/components/TypingIndicator";
 import ThemeToggle from "@/components/ThemeToggle";
-import { Sparkles } from "lucide-react";
+import { Menu } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Message {
@@ -154,9 +154,9 @@ export default function Chat() {
       {/* Header */}
       <header className="border-b bg-card px-4 md:px-6 h-16 flex items-center justify-between sticky top-0 z-10 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-            <Sparkles className="h-5 w-5 text-primary" />
-          </div>
+          <button className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors">
+            <Menu className="h-5 w-5 text-primary" />
+          </button>
           <div>
             <h1 className="text-lg font-bold font-serif">Muslim Gen</h1>
             <p className="text-xs text-muted-foreground">المرشد الإسلامي</p>
