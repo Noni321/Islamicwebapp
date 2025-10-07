@@ -1,19 +1,17 @@
-import express from "express";
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
-const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-app.post("/api/chat", async (req, res) => {
   try {
-    if (!req.is('application/json')) {
+    const { message, conversationHistory = [] } = req.body;
+    
+    if (!message) {
       return res.status(400).json({ 
-        error: "Content-Type must be application/json",
-        response: "Invalid request format."
+        error: "Message is required",
+        response: "Please provide a message."
       });
     }
-    
-    const { message, conversationHistory = [] } = req.body;
     
     const apiKey = process.env.MOSLEM_BOT_API_KEY;
     const userId = process.env.MOSLEM_BOT_USER_ID;
@@ -40,6 +38,8 @@ app.post("/api/chat", async (req, res) => {
       ],
     };
     
+    console.log("Calling Moslem Bot API...");
+    
     const response = await fetch("https://api.moslembot.com/chat", {
       method: "POST",
       headers: {
@@ -53,10 +53,14 @@ app.post("/api/chat", async (req, res) => {
     if (!response.ok) {
       const errorText = await response.text().catch(() => "Unknown error");
       console.error(`Moslem Bot API error (${response.status}):`, errorText);
-      throw new Error(`API request failed with status ${response.status}`);
+      return res.status(500).json({
+        error: `API request failed with status ${response.status}`,
+        response: "I apologize, but there was an error processing your question. Please try again."
+      });
     }
 
     const data = await response.json();
+    console.log("API Response received:", data);
     
     if (!data || !data.response || typeof data.response !== 'string') {
       console.error("Invalid API response structure:", data);
@@ -66,14 +70,12 @@ app.post("/api/chat", async (req, res) => {
       });
     }
     
-    res.json({ response: data.response });
+    return res.status(200).json({ response: data.response });
   } catch (error) {
-    console.error("Error calling Moslem Bot API:", error);
-    res.status(500).json({ 
-      error: "Failed to get response from Islamic bot",
+    console.error("Error in chat handler:", error);
+    return res.status(500).json({ 
+      error: error.message || "Internal server error",
       response: "I apologize, but I'm having trouble connecting. Please try again."
     });
   }
-});
-
-export default app;
+}
