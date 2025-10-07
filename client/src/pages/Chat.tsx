@@ -19,6 +19,7 @@ export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [streamingText, setStreamingText] = useState("");
+  const [hijriDate, setHijriDate] = useState<string>("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const streamingIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -30,6 +31,19 @@ export default function Chat() {
   useEffect(() => {
     scrollToBottom();
   }, [messages, isLoading]);
+
+  useEffect(() => {
+    const fetchHijriDate = async () => {
+      try {
+        const response = await fetch("https://hijri.habibur.com/api01/date/");
+        const date = await response.text();
+        setHijriDate(date.trim());
+      } catch (error) {
+        console.error("Failed to fetch Hijri date:", error);
+      }
+    };
+    fetchHijriDate();
+  }, []);
 
   const formatTime = () => {
     return new Date().toLocaleTimeString("en-US", {
@@ -163,6 +177,13 @@ export default function Chat() {
             <p className="text-xs text-muted-foreground">المرشد الإسلامي</p>
           </div>
         </div>
+        {hijriDate && (
+          <div className="absolute left-1/2 -translate-x-1/2 hidden md:block">
+            <p className="text-sm font-serif text-foreground/80" data-testid="text-hijri-date">
+              {hijriDate}
+            </p>
+          </div>
+        )}
         <ThemeToggle />
       </header>
 
