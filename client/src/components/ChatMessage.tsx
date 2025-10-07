@@ -86,7 +86,7 @@ export default function ChatMessage({ message, isUser, timestamp }: ChatMessageP
         ) : (
           <div className="space-y-3">
             {/* Qur'an and Hadith References */}
-            {(parsed?.quranRefs.length > 0 || parsed?.hadithRefs.length > 0) && (
+            {parsed && (parsed.quranRefs.length > 0 || parsed.hadithRefs.length > 0) && (
               <div className="bg-muted/30 rounded-lg p-3 space-y-2 text-sm">
                 {parsed.quranRefs.length > 0 && (
                   <div>
