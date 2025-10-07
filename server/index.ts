@@ -1,4 +1,12 @@
-import express, { type Request, Response, NextFunction } from "express";
+import express from "express";
+import { registerRoutes } from "./routes.js"; // adjust extension agar ts hai
+import serverless from "serverless-http";
+
+const app = express();
+app.use(express.json());
+registerRoutes(app);
+
+export const handler = serverless(app);
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
