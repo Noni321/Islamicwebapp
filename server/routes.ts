@@ -87,6 +87,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/hijri-date", async (_req, res) => {
+    try {
+      const response = await fetch("https://hijri.habibur.com/api01/date/");
+      const date = await response.text();
+      res.json({ date: date.trim() });
+    } catch (error) {
+      console.error("Error fetching Hijri date:", error);
+      res.status(500).json({ error: "Failed to fetch Hijri date" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

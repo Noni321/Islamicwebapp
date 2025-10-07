@@ -35,9 +35,9 @@ export default function Chat() {
   useEffect(() => {
     const fetchHijriDate = async () => {
       try {
-        const response = await fetch("https://hijri.habibur.com/api01/date/");
-        const date = await response.text();
-        setHijriDate(date.trim());
+        const response = await fetch("/api/hijri-date");
+        const data = await response.json();
+        setHijriDate(data.date);
       } catch (error) {
         console.error("Failed to fetch Hijri date:", error);
       }
