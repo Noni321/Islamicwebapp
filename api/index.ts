@@ -1,0 +1,59 @@
+import express, { type Request, type Response, type NextFunction } from "express";
+import { registerRoutes } from "../server/routes";
+import { log } from "../server/vite";
+
+const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+app.use((req: Request, res: Response, next: NextFunction) => {
+  const start = Date.now();
+  const path = req.path;
+  let capturedJsonResponse: Record<string, any> | undefined = undefined;
+
+  const originalResJson = res.json.bind(res);
+  res.json = function (bodyJson: any) {
+    capturedJsonResponse = bodyJson;
+    return originalResJson(bodyJson);
+  };
+
+  res.on("finish", () => {
+    const duration = Date.now() - start;
+    if (path.startsWith("/api")) {
+      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
+      if (capturedJsonResponse) {
+        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+      }
+
+      if (logLine.length > 80) {
+        logLine = logLine.slice(0, 79) + "…";
+      }
+
+      log(logLine);
+    }
+  });
+
+  next();
+});
+
+(async () => {
+  await registerRoutes(app);
+
+  app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+    const status = err.status || err.statusCode || 500;
+    const message = err.message || "Internal Server Error";
+
+    res.status(status).json({ message });
+    log(`Error ${status}: ${message}`);
+  });
+
+  if (!process.env.MOSLEM_BOT_API_KEY || !process.env.MOSLEM_BOT_USER_ID) {
+    log("\n⚠️  WARNING: Missing Moslem Bot API credentials!");
+    log("Please set the following environment variables:");
+    log("  - MOSLEM_BOT_API_KEY");
+    log("  - MOSLEM_BOT_USER_ID");
+    log("The chatbot will not work without these credentials.\n");
+  }
+})();
+
+export default app;
