@@ -44,7 +44,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     const message = err.message || "Internal Server Error";
 
     res.status(status).json({ message });
-    throw err;
+    log(`Error ${status}: ${message}`);
   });
 
   // Check for required environment variables at startup
