@@ -112,27 +112,25 @@ export default function ChatMessage({ message, isUser, timestamp }: ChatMessageP
               <div className="border border-border rounded-lg overflow-hidden">
                 <button
                   onClick={() => setShowThinking(!showThinking)}
-                  className="w-full flex items-center justify-between p-3 bg-muted/20 hover:bg-muted/30 transition-colors"
+                  className="w-full text-left p-3 bg-muted/20 hover:bg-muted/30 transition-colors"
                 >
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 mb-2">
                     <BookOpen className="h-4 w-4 text-primary" />
                     <span className="text-sm font-medium text-primary/70">
                       Scholar's Thinking (Internal Notes)
                     </span>
+                    {showThinking ? (
+                      <ChevronUp className="h-4 w-4 text-muted-foreground ml-auto" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4 text-muted-foreground ml-auto" />
+                    )}
                   </div>
-                  {showThinking ? (
-                    <ChevronUp className="h-4 w-4 text-muted-foreground" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </button>
-                {showThinking && (
-                  <div className="p-3 text-sm prose prose-sm dark:prose-invert max-w-none bg-muted/10">
+                  <div className={`text-sm prose prose-sm dark:prose-invert max-w-none ${!showThinking ? 'line-clamp-2' : ''}`}>
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                       {parsed.scholarThinking}
                     </ReactMarkdown>
                   </div>
-                )}
+                </button>
               </div>
             )}
 
