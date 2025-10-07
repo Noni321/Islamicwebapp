@@ -48,11 +48,6 @@ export default function Chat() {
     return history;
   };
 
-  const removeThinkTags = (text: string): string => {
-    let cleaned = text.replace(/<think>[\s\S]*?<\/think>/g, '');
-    cleaned = cleaned.replace(/<think>[\s\S]*$/g, '');
-    return cleaned.trim();
-  };
 
   const handleSendMessage = async (text: string) => {
     const userMessage: Message = {
@@ -100,13 +95,12 @@ export default function Chat() {
       
       streamingIntervalRef.current = setInterval(() => {
         if (currentIndex < words.length) {
-          const rawText = words.slice(0, currentIndex + 1).join(' ');
-          const displayText = removeThinkTags(rawText);
+          const displayText = words.slice(0, currentIndex + 1).join(' ');
           
           setMessages((prev) =>
             prev.map((msg) =>
               msg.id === botMessageId
-                ? { ...msg, text: displayText || rawText, isStreaming: true }
+                ? { ...msg, text: displayText, isStreaming: true }
                 : msg
             )
           );
@@ -115,10 +109,9 @@ export default function Chat() {
           if (streamingIntervalRef.current) {
             clearInterval(streamingIntervalRef.current);
           }
-          const finalText = removeThinkTags(fullResponse) || fullResponse;
           setMessages((prev) =>
             prev.map((msg) =>
-              msg.id === botMessageId ? { ...msg, text: finalText, isStreaming: false } : msg
+              msg.id === botMessageId ? { ...msg, text: fullResponse, isStreaming: false } : msg
             )
           );
         }
