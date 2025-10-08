@@ -177,14 +177,14 @@ export default function Chat() {
             <p className="text-xs text-muted-foreground">المرشد الإسلامي</p>
           </div>
         </div>
-        {hijriDate && (
-          <div className="absolute left-1/2 -translate-x-1/2">
-            <p className="text-sm font-serif text-foreground/80" data-testid="text-hijri-date">
+        <div className="flex items-center gap-3">
+          {hijriDate && (
+            <p className="text-xs font-serif text-foreground/70" data-testid="text-hijri-date">
               {hijriDate}
             </p>
-          </div>
-        )}
-        <ThemeToggle />
+          )}
+          <ThemeToggle />
+        </div>
       </header>
 
       {/* Messages Area */}
