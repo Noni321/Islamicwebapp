@@ -178,7 +178,7 @@ export default function Chat() {
           </div>
         </div>
         {hijriDate && (
-          <div className="absolute left-1/2 -translate-x-1/2 hidden md:block">
+          <div className="absolute left-1/2 -translate-x-1/2">
             <p className="text-sm font-serif text-foreground/80" data-testid="text-hijri-date">
               {hijriDate}
             </p>
