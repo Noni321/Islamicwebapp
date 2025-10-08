@@ -12,13 +12,13 @@ interface Message {
   text: string;
   isUser: boolean;
   timestamp: string;
+  thinking?: string;
   isStreaming?: boolean;
 }
 
 export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [streamingText, setStreamingText] = useState("");
   const [hijriDate, setHijriDate] = useState<string>("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -91,21 +91,29 @@ export default function Chat() {
       const data = await response.json();
       const fullResponse = data.response;
 
-      // Create placeholder message for streaming
+      // Extract thinking from response text
+      const thinkMatch = fullResponse.match(/<think>([\s\S]*?)<\/think>/);
+      const thinking = thinkMatch ? thinkMatch[1].trim() : undefined;
+      
+      // Remove thinking from main text
+      const mainText = fullResponse.replace(/<think>[\s\S]*?<\/think>/, '').trim();
+
+      // Create placeholder message for streaming with thinking already set
       const botMessageId = (Date.now() + 1).toString();
       const botMessage: Message = {
         id: botMessageId,
         text: "",
         isUser: false,
         timestamp: formatTime(),
+        thinking: thinking,
         isStreaming: true,
       };
 
       setMessages((prev) => [...prev, botMessage]);
 
-      // Stream the response word by word
+      // Stream the main text word by word (thinking already loaded)
       let currentIndex = 0;
-      const words = fullResponse.split(' ');
+      const words = mainText.split(' ');
       
       streamingIntervalRef.current = setInterval(() => {
         if (currentIndex < words.length) {
@@ -125,11 +133,11 @@ export default function Chat() {
           }
           setMessages((prev) =>
             prev.map((msg) =>
-              msg.id === botMessageId ? { ...msg, text: fullResponse, isStreaming: false } : msg
+              msg.id === botMessageId ? { ...msg, text: mainText, isStreaming: false } : msg
             )
           );
         }
-      }, 50); // Adjust speed here (50ms = fast, 100ms = medium, 150ms = slow)
+      }, 50);
     } catch (error) {
       console.error("Error sending message:", error);
       
@@ -158,7 +166,6 @@ export default function Chat() {
   // Clear chat function
   const handleClearChat = () => {
     setMessages([]);
-    setStreamingText("");
     if (streamingIntervalRef.current) {
       clearInterval(streamingIntervalRef.current);
     }
@@ -209,6 +216,7 @@ export default function Chat() {
                 message={message.text}
                 isUser={message.isUser}
                 timestamp={message.timestamp}
+                thinking={message.thinking}
               />
             ))}
             {isLoading && <TypingIndicator />}

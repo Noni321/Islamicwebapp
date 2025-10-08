@@ -9,6 +9,7 @@ interface ChatMessageProps {
   message: string;
   isUser: boolean;
   timestamp?: string;
+  thinking?: string;
 }
 
 interface ParsedResponse {
@@ -59,9 +60,12 @@ function parseResponse(text: string): ParsedResponse {
   return result;
 }
 
-export default function ChatMessage({ message, isUser, timestamp }: ChatMessageProps) {
+export default function ChatMessage({ message, isUser, timestamp, thinking }: ChatMessageProps) {
   const [showThinking, setShowThinking] = useState(false);
   const parsed = !isUser ? parseResponse(message) : null;
+  
+  // Use thinking prop if available, otherwise use parsed thinking from text
+  const scholarThinking = thinking || parsed?.scholarThinking;
 
   return (
     <div
@@ -108,11 +112,12 @@ export default function ChatMessage({ message, isUser, timestamp }: ChatMessageP
             )}
 
             {/* Scholar's Thinking (Collapsible) */}
-            {parsed?.scholarThinking && (
+            {scholarThinking && (
               <div className="border border-border rounded-lg overflow-hidden">
                 <button
                   onClick={() => setShowThinking(!showThinking)}
                   className="w-full text-left p-3 bg-muted/20 hover:bg-muted/30 transition-colors"
+                  data-testid="button-scholar-thinking"
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <BookOpen className="h-4 w-4 text-primary" />
@@ -127,7 +132,7 @@ export default function ChatMessage({ message, isUser, timestamp }: ChatMessageP
                   </div>
                   <div className={`text-sm prose prose-sm dark:prose-invert max-w-none ${!showThinking ? 'line-clamp-2' : ''}`}>
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {parsed.scholarThinking}
+                      {scholarThinking}
                     </ReactMarkdown>
                   </div>
                 </button>
