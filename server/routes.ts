@@ -27,10 +27,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Format conversation history exactly as API expects: string with nested arrays
-      // Example from working API call: "[[\"question\", \"answer\"]]"
-      const conversationHistoryString = body.conversationHistory && body.conversationHistory.length > 0
-        ? `[${body.conversationHistory.map(([q, a]) => `[\"${q.replace(/"/g, '\\"')}\", \"${a.replace(/"/g, '\\"')}\"]`).join(', ')}]`
-        : "[]";
+      // Add system instruction at the start for English responses
+      const historyWithInstruction = body.conversationHistory && body.conversationHistory.length > 0
+        ? body.conversationHistory
+        : [];
+      
+      // Prepend system instruction if no history exists
+      const withSystemInstruction = historyWithInstruction.length === 0
+        ? [["System: Always respond in English language regardless of the question language.", "Understood. I will always respond in English."]]
+        : historyWithInstruction;
+      
+      const conversationHistoryString = `[${withSystemInstruction.map(([q, a]) => `[\"${q.replace(/"/g, '\\"')}\", \"${a.replace(/"/g, '\\"')}\"]`).join(', ')}]`;
       
       const requestBody = {
         data: [
