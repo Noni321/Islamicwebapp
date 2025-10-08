@@ -4,7 +4,7 @@ import ChatInput from "@/components/ChatInput";
 import WelcomeScreen from "@/components/WelcomeScreen";
 import TypingIndicator from "@/components/TypingIndicator";
 import ThemeToggle from "@/components/ThemeToggle";
-import { Menu } from "lucide-react";
+import { Menu, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Message {
@@ -155,6 +155,16 @@ export default function Chat() {
     }
   };
 
+  // Clear chat function
+  const handleClearChat = () => {
+    setMessages([]);
+    setStreamingText("");
+    if (streamingIntervalRef.current) {
+      clearInterval(streamingIntervalRef.current);
+    }
+    setIsLoading(false);
+  };
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -204,6 +214,21 @@ export default function Chat() {
             {isLoading && <TypingIndicator />}
             <div ref={messagesEndRef} />
           </div>
+        </div>
+      )}
+
+      {/* New Chat Button */}
+      {messages.length > 0 && (
+        <div className="flex justify-center py-3">
+          <button
+            onClick={handleClearChat}
+            disabled={isLoading}
+            className="group flex items-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-full transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            data-testid="button-new-chat"
+          >
+            <Plus className="h-4 w-4 transition-transform duration-300 group-hover:rotate-90" />
+            <span className="text-sm font-medium">New Chat</span>
+          </button>
         </div>
       )}
 
