@@ -21,10 +21,11 @@ Preferred communication style: Simple, everyday language.
 
 **Design System:**
 - Uses shadcn/ui components with the "new-york" style preset
-- Custom theme system supporting **3 themes**: Light, Dark, and Sepia (warm golden Islamic theme) via ThemeProvider context
+- Custom theme system supporting **3 themes**: Light, Dark, and Midnight (deep blue/purple) via ThemeProvider context
 - Tailwind configuration with custom HSL-based color system for consistent theming
 - Arabic and English typography support (Noto Sans Arabic, Amiri, Inter fonts)
-- Theme toggle cycles through: Light -> Dark -> Sepia -> Light
+- Theme toggle cycles through: Light -> Dark -> Midnight -> Light
+- Multi-language welcome screen with suggested questions in Arabic, English, Turkish, Urdu, French, and German with animated slide-in effects and language badges
 
 **State Management:**
 - Local component state (useState) for chat messages and UI interactions
