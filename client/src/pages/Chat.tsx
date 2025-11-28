@@ -111,13 +111,15 @@ export default function Chat() {
 
       setMessages((prev) => [...prev, botMessage]);
 
-      // Stream the main text word by word (thinking already loaded)
+      // Stream the main text word by word (thinking already loaded) - FASTER streaming
       let currentIndex = 0;
       const words = mainText.split(' ');
+      const wordsPerBatch = 3; // Display 3 words at a time for faster response
       
       streamingIntervalRef.current = setInterval(() => {
         if (currentIndex < words.length) {
-          const displayText = words.slice(0, currentIndex + 1).join(' ');
+          currentIndex = Math.min(currentIndex + wordsPerBatch, words.length);
+          const displayText = words.slice(0, currentIndex).join(' ');
           
           setMessages((prev) =>
             prev.map((msg) =>
@@ -126,7 +128,6 @@ export default function Chat() {
                 : msg
             )
           );
-          currentIndex++;
         } else {
           if (streamingIntervalRef.current) {
             clearInterval(streamingIntervalRef.current);
@@ -137,7 +138,7 @@ export default function Chat() {
             )
           );
         }
-      }, 50);
+      }, 20);
     } catch (error) {
       console.error("Error sending message:", error);
       
