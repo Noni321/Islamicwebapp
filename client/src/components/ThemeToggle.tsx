@@ -1,4 +1,4 @@
-import { Moon, Sun, Palette } from "lucide-react";
+import { Moon, Sun, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "./ThemeProvider";
 
@@ -10,8 +10,8 @@ export default function ThemeToggle() {
       case "light":
         return <Moon className="h-5 w-5" />;
       case "dark":
-        return <Palette className="h-5 w-5" />;
-      case "sepia":
+        return <Sparkles className="h-5 w-5" />;
+      case "midnight":
         return <Sun className="h-5 w-5" />;
       default:
         return <Moon className="h-5 w-5" />;

@@ -1,4 +1,4 @@
-import { Sparkles } from "lucide-react";
+import { Sparkles, Globe } from "lucide-react";
 import SuggestedQuestion from "./SuggestedQuestion";
 import { useState, useEffect } from "react";
 
@@ -6,45 +6,55 @@ interface WelcomeScreenProps {
   onQuestionSelect: (question: string) => void;
 }
 
-const allQuestions = [
-  "What is the purpose of life?",
-  "How do I perform Wudu correctly?",
-  "What are the five pillars of Islam?",
-  "Can you explain the importance of Ramadan?",
-  "How do I perform Salah step by step?",
-  "What is the meaning of Tawheed?",
-  "Can you explain the concept of Halal and Haram?",
-  "What are the benefits of reciting the Quran?",
-  "How should I seek forgiveness in Islam?",
-  "What is the significance of Friday prayer?",
-  "Can you explain the concept of Qadar (destiny)?",
-  "What are the manners of making Dua?",
-  "How do I calculate Zakat?",
-  "What is the importance of family in Islam?",
-  "Can you explain the life of Prophet Muhammad (PBUH)?",
-  "What are the signs of the Day of Judgment?",
-  "How should I dress according to Islamic guidelines?",
-  "What is the significance of the Night of Power (Laylatul Qadr)?",
-  "How do I maintain patience during difficult times?",
-  "What is the importance of seeking knowledge in Islam?"
+interface MultiLangQuestion {
+  question: string;
+  language: string;
+  flag: string;
+}
+
+const allQuestions: MultiLangQuestion[] = [
+  { question: "What is the purpose of life in Islam?", language: "English", flag: "EN" },
+  { question: "How do I perform Wudu correctly?", language: "English", flag: "EN" },
+  { question: "What are the five pillars of Islam?", language: "English", flag: "EN" },
+  { question: "Can you explain the importance of Ramadan?", language: "English", flag: "EN" },
+  { question: "Namaz kaise padhen step by step?", language: "Urdu", flag: "UR" },
+  { question: "Zakat ka hisaab kaise lagayein?", language: "Urdu", flag: "UR" },
+  { question: "Ramzan ki fazilat kya hai?", language: "Urdu", flag: "UR" },
+  { question: "Tawheed ka matlab kya hai?", language: "Urdu", flag: "UR" },
+  { question: "ما هي أركان الإسلام الخمسة؟", language: "Arabic", flag: "AR" },
+  { question: "كيف أتوضأ بشكل صحيح؟", language: "Arabic", flag: "AR" },
+  { question: "ما فضل قراءة القرآن؟", language: "Arabic", flag: "AR" },
+  { question: "كيف أحسب الزكاة؟", language: "Arabic", flag: "AR" },
+  { question: "Hayattaki amacim nedir?", language: "Turkish", flag: "TR" },
+  { question: "Namaz nasil kilinir?", language: "Turkish", flag: "TR" },
+  { question: "Comment faire la priere correctement?", language: "French", flag: "FR" },
+  { question: "Quels sont les cinq piliers de l'Islam?", language: "French", flag: "FR" },
+  { question: "What is the significance of Friday prayer?", language: "English", flag: "EN" },
+  { question: "Dua maangne ka tareeqa kya hai?", language: "Urdu", flag: "UR" },
+  { question: "ما معنى التوحيد؟", language: "Arabic", flag: "AR" },
+  { question: "Wie berechnet man Zakat?", language: "German", flag: "DE" },
 ];
 
-const getRandomQuestions = (count: number) => {
+const getRandomQuestions = (count: number): MultiLangQuestion[] => {
   const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, count);
 };
 
 export default function WelcomeScreen({ onQuestionSelect }: WelcomeScreenProps) {
-  const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([]);
+  const [suggestedQuestions, setSuggestedQuestions] = useState<MultiLangQuestion[]>([]);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     setSuggestedQuestions(getRandomQuestions(4));
+    const timer = setTimeout(() => setIsVisible(true), 100);
+    return () => clearTimeout(timer);
   }, []);
+
   return (
     <div className="flex-1 flex items-center justify-center p-6">
       <div className="max-w-2xl w-full space-y-8">
-        <div className="text-center space-y-4">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10">
+        <div className={`text-center space-y-4 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 animate-pulse">
             <Sparkles className="h-8 w-8 text-primary" />
           </div>
           <div className="space-y-2">
@@ -56,18 +66,31 @@ export default function WelcomeScreen({ onQuestionSelect }: WelcomeScreenProps) 
             </p>
           </div>
         </div>
+
+        <div className={`flex items-center justify-center gap-2 transition-all duration-500 delay-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+          <Globe className="h-4 w-4 text-primary" />
+          <p className="text-sm text-primary font-medium" data-testid="text-any-language">
+            Ask in any language - Kisi bhi zubaan mein poochein
+          </p>
+        </div>
         
         <div className="space-y-3">
-          <p className="text-sm font-medium text-muted-foreground text-center">
+          <p className={`text-sm font-medium text-muted-foreground text-center transition-all duration-500 delay-400 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
             Suggested Questions
           </p>
           <div className="grid gap-3">
-            {suggestedQuestions.map((question, index) => (
-              <SuggestedQuestion
+            {suggestedQuestions.map((item, index) => (
+              <div
                 key={index}
-                question={question}
-                onClick={() => onQuestionSelect(question)}
-              />
+                className={`transition-all duration-500 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}
+                style={{ transitionDelay: `${500 + index * 100}ms` }}
+              >
+                <SuggestedQuestion
+                  question={item.question}
+                  language={item.flag}
+                  onClick={() => onQuestionSelect(item.question)}
+                />
+              </div>
             ))}
           </div>
         </div>

@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
-type Theme = "light" | "dark" | "sepia";
+type Theme = "light" | "dark" | "midnight";
 
 interface ThemeContextType {
   theme: Theme;
@@ -13,7 +13,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => {
     const stored = localStorage.getItem("theme");
-    if (stored === "light" || stored === "dark" || stored === "sepia") {
+    if (stored === "light" || stored === "dark" || stored === "midnight") {
       return stored;
     }
     return "light";
@@ -21,7 +21,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const root = document.documentElement;
-    root.classList.remove("light", "dark", "sepia");
+    root.classList.remove("light", "dark", "midnight");
     root.classList.add(theme);
     localStorage.setItem("theme", theme);
   }, [theme]);
@@ -29,7 +29,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const toggleTheme = () => {
     setThemeState((prev) => {
       if (prev === "light") return "dark";
-      if (prev === "dark") return "sepia";
+      if (prev === "dark") return "midnight";
       return "light";
     });
   };
