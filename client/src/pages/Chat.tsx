@@ -24,13 +24,26 @@ export default function Chat() {
   const { toast } = useToast();
   const streamingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  const isUserScrollingRef = useRef(false);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (!isUserScrollingRef.current) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   useEffect(() => {
     scrollToBottom();
   }, [messages, isLoading]);
+
+  const handleScroll = () => {
+    if (messagesContainerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
+      const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
+      isUserScrollingRef.current = !isAtBottom;
+    }
+  };
 
   useEffect(() => {
     const fetchHijriDate = async () => {
@@ -111,10 +124,10 @@ export default function Chat() {
 
       setMessages((prev) => [...prev, botMessage]);
 
-      // Stream the main text word by word (thinking already loaded) - FASTER streaming
+      // Stream the main text word by word with slower animation
       let currentIndex = 0;
       const words = mainText.split(' ');
-      const wordsPerBatch = 3; // Display 3 words at a time for faster response
+      const wordsPerBatch = 2; // Display 2 words at a time for better readability
       
       streamingIntervalRef.current = setInterval(() => {
         if (currentIndex < words.length) {
@@ -137,8 +150,9 @@ export default function Chat() {
               msg.id === botMessageId ? { ...msg, text: mainText, isStreaming: false } : msg
             )
           );
+          isUserScrollingRef.current = false;
         }
-      }, 20);
+      }, 60);
     } catch (error) {
       console.error("Error sending message:", error);
       
@@ -209,7 +223,11 @@ export default function Chat() {
       {messages.length === 0 ? (
         <WelcomeScreen onQuestionSelect={handleSendMessage} />
       ) : (
-        <div className="flex-1 overflow-y-auto scroll-smooth">
+        <div 
+          ref={messagesContainerRef}
+          onScroll={handleScroll}
+          className="flex-1 overflow-y-auto scroll-smooth"
+        >
           <div className="max-w-4xl mx-auto px-4 md:px-6 py-6 space-y-4">
             {messages.map((message) => (
               <ChatMessage

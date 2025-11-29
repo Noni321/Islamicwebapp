@@ -17,22 +17,31 @@ const allQuestions: MultiLangQuestion[] = [
   { question: "How do I perform Wudu correctly?", language: "English", flag: "EN" },
   { question: "What are the five pillars of Islam?", language: "English", flag: "EN" },
   { question: "Can you explain the importance of Ramadan?", language: "English", flag: "EN" },
+  { question: "What is the significance of Friday prayer?", language: "English", flag: "EN" },
+  { question: "How should I recite Surah Al-Fatiha?", language: "English", flag: "EN" },
   { question: "Namaz kaise padhen step by step?", language: "Urdu", flag: "UR" },
   { question: "Zakat ka hisaab kaise lagayein?", language: "Urdu", flag: "UR" },
   { question: "Ramzan ki fazilat kya hai?", language: "Urdu", flag: "UR" },
   { question: "Tawheed ka matlab kya hai?", language: "Urdu", flag: "UR" },
+  { question: "Dua maangne ka tareeqa kya hai?", language: "Urdu", flag: "UR" },
   { question: "ما هي أركان الإسلام الخمسة؟", language: "Arabic", flag: "AR" },
   { question: "كيف أتوضأ بشكل صحيح؟", language: "Arabic", flag: "AR" },
   { question: "ما فضل قراءة القرآن؟", language: "Arabic", flag: "AR" },
   { question: "كيف أحسب الزكاة؟", language: "Arabic", flag: "AR" },
+  { question: "ما معنى التوحيد؟", language: "Arabic", flag: "AR" },
   { question: "Hayattaki amacim nedir?", language: "Turkish", flag: "TR" },
   { question: "Namaz nasil kilinir?", language: "Turkish", flag: "TR" },
   { question: "Comment faire la priere correctement?", language: "French", flag: "FR" },
   { question: "Quels sont les cinq piliers de l'Islam?", language: "French", flag: "FR" },
-  { question: "What is the significance of Friday prayer?", language: "English", flag: "EN" },
-  { question: "Dua maangne ka tareeqa kya hai?", language: "Urdu", flag: "UR" },
-  { question: "ما معنى التوحيد؟", language: "Arabic", flag: "AR" },
   { question: "Wie berechnet man Zakat?", language: "German", flag: "DE" },
+  { question: "Islam mein zindagi ka maqsad kya hai?", language: "Hindi", flag: "HI" },
+  { question: "Namaz padhne ka sahi tarika kya hai?", language: "Hindi", flag: "HI" },
+  { question: "Ramadan ka mahatva kya hai?", language: "Hindi", flag: "HI" },
+  { question: "Quran padhne ke fayde kya hain?", language: "Hindi", flag: "HI" },
+  { question: "Islam e jibonar uddeshyo ki?", language: "Bengali", flag: "BN" },
+  { question: "Namaz kivabe pora korbo?", language: "Bengali", flag: "BN" },
+  { question: "Ramadan er gurutto ki?", language: "Bengali", flag: "BN" },
+  { question: "Zakat ki ebong keno dite hobe?", language: "Bengali", flag: "BN" },
 ];
 
 const getRandomQuestions = (count: number): MultiLangQuestion[] => {
@@ -70,7 +79,7 @@ export default function WelcomeScreen({ onQuestionSelect }: WelcomeScreenProps) 
         <div className={`flex items-center justify-center gap-2 transition-all duration-500 delay-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
           <Globe className="h-4 w-4 text-primary" />
           <p className="text-sm text-primary font-medium" data-testid="text-any-language">
-            Ask in any language - Kisi bhi zubaan mein poochein
+            Ask in any language
           </p>
         </div>
         
@@ -87,7 +96,6 @@ export default function WelcomeScreen({ onQuestionSelect }: WelcomeScreenProps) 
               >
                 <SuggestedQuestion
                   question={item.question}
-                  language={item.flag}
                   onClick={() => onQuestionSelect(item.question)}
                 />
               </div>
