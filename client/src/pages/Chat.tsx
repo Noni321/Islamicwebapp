@@ -4,7 +4,7 @@ import ChatInput from "@/components/ChatInput";
 import WelcomeScreen from "@/components/WelcomeScreen";
 import TypingIndicator from "@/components/TypingIndicator";
 import ThemeToggle from "@/components/ThemeToggle";
-import { Menu, Plus } from "lucide-react";
+import { Menu, Plus, Square } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Message {
@@ -19,6 +19,7 @@ interface Message {
 export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
   const [hijriDate, setHijriDate] = useState<string>("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -123,6 +124,7 @@ export default function Chat() {
       };
 
       setMessages((prev) => [...prev, botMessage]);
+      setIsStreaming(true);
 
       // Stream the main text word by word with slower animation
       let currentIndex = 0;
@@ -130,6 +132,11 @@ export default function Chat() {
       const wordsPerBatch = 2; // Display 2 words at a time for better readability
       
       streamingIntervalRef.current = setInterval(() => {
+        // Check if streaming was stopped
+        if (!streamingIntervalRef.current) {
+          return;
+        }
+        
         if (currentIndex < words.length) {
           currentIndex = Math.min(currentIndex + wordsPerBatch, words.length);
           const displayText = words.slice(0, currentIndex).join(' ');
@@ -144,12 +151,14 @@ export default function Chat() {
         } else {
           if (streamingIntervalRef.current) {
             clearInterval(streamingIntervalRef.current);
+            streamingIntervalRef.current = null;
           }
           setMessages((prev) =>
             prev.map((msg) =>
               msg.id === botMessageId ? { ...msg, text: mainText, isStreaming: false } : msg
             )
           );
+          setIsStreaming(false);
           isUserScrollingRef.current = false;
         }
       }, 60);
@@ -159,6 +168,7 @@ export default function Chat() {
       if (streamingIntervalRef.current) {
         clearInterval(streamingIntervalRef.current);
       }
+      setIsStreaming(false);
       
       toast({
         title: "Error",
@@ -178,13 +188,32 @@ export default function Chat() {
     }
   };
 
+  const handleStopGeneration = () => {
+    if (streamingIntervalRef.current) {
+      clearInterval(streamingIntervalRef.current);
+      streamingIntervalRef.current = null;
+    }
+    setIsStreaming(false);
+    setIsLoading(false);
+    setMessages((prev) =>
+      prev.map((msg) =>
+        msg.isStreaming 
+          ? { ...msg, text: msg.text + "\n\n*[Generation stopped]*", isStreaming: false } 
+          : msg
+      )
+    );
+    isUserScrollingRef.current = false;
+  };
+
   // Clear chat function
   const handleClearChat = () => {
     setMessages([]);
     if (streamingIntervalRef.current) {
       clearInterval(streamingIntervalRef.current);
+      streamingIntervalRef.current = null;
     }
     setIsLoading(false);
+    setIsStreaming(false);
   };
 
   // Cleanup on unmount
@@ -239,6 +268,18 @@ export default function Chat() {
               />
             ))}
             {isLoading && <TypingIndicator />}
+            {isStreaming && (
+              <div className="flex justify-center">
+                <button
+                  onClick={handleStopGeneration}
+                  className="flex items-center gap-2 px-4 py-2 bg-destructive/10 hover:bg-destructive/20 text-destructive rounded-full transition-all duration-200"
+                  data-testid="button-stop-generation"
+                >
+                  <Square className="h-3 w-3 fill-current" />
+                  <span className="text-sm font-medium">Stop</span>
+                </button>
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </div>
         </div>

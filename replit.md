@@ -80,10 +80,10 @@ Preferred communication style: Simple, everyday language.
   - Response format includes special markup for references (e.g., #49:17# for Quran, <sahih-muslim:1:162> for Hadith)
 
 **Local Services:**
-- **Hijri Date Calculator** - Local Python script using hijridate library
-  - `server/hijri_date.py` - Converts Gregorian date to Hijri using Umm al-Qura calendar
-  - `hijridate-2.5.0-py3-none-any.whl` - Python wheel file for hijridate library
-  - No external API dependency - works offline
+- **Hijri Date Calculator** - JavaScript implementation using hijri-converter library
+  - Uses `hijri-converter` npm package for Gregorian to Hijri conversion
+  - Implemented in `server/routes.ts` as a pure JavaScript function
+  - Works on Vercel and all serverless platforms (no Python dependency)
   - Returns format: "8 Jumada al-Thani 1447 AH"
 
 **UI Component Libraries:**
