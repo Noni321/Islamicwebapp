@@ -1,6 +1,10 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { chatMessageSchema, type ChatResponse } from "@shared/schema";
+import { exec } from "child_process";
+import { promisify } from "util";
+
+const execAsync = promisify(exec);
 
 export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/chat", async (req, res) => {
@@ -96,12 +100,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/hijri-date", async (_req, res) => {
     try {
-      const response = await fetch("https://hijri.habibur.com/api01/date/");
-      const date = await response.text();
-      res.json({ date: date.trim() });
+      const { stdout } = await execAsync("python server/hijri_date.py");
+      res.json({ date: stdout.trim() });
     } catch (error) {
-      console.error("Error fetching Hijri date:", error);
-      res.status(500).json({ error: "Failed to fetch Hijri date" });
+      console.error("Error getting Hijri date:", error);
+      res.status(500).json({ error: "Failed to get Hijri date" });
     }
   });
 

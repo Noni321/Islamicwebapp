@@ -79,6 +79,13 @@ Preferred communication style: Simple, everyday language.
   - Provides Quran references, Hadith citations, and scholarly responses
   - Response format includes special markup for references (e.g., #49:17# for Quran, <sahih-muslim:1:162> for Hadith)
 
+**Local Services:**
+- **Hijri Date Calculator** - Local Python script using hijridate library
+  - `server/hijri_date.py` - Converts Gregorian date to Hijri using Umm al-Qura calendar
+  - `hijridate-2.5.0-py3-none-any.whl` - Python wheel file for hijridate library
+  - No external API dependency - works offline
+  - Returns format: "8 Jumada al-Thani 1447 AH"
+
 **UI Component Libraries:**
 - **Radix UI** - Headless component primitives (accordion, dialog, dropdown, popover, etc.)
 - **Lucide React** - Icon library
